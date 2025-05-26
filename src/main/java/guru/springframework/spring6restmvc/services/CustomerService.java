@@ -18,4 +18,8 @@ public interface CustomerService {
     public Customer saveNewCustomerPOST(Customer customer) ;
 
     Customer updateCustomerByIDPUT(UUID customerId, Customer customer);
+
+    Customer deleteCustomerById(UUID id);
+
+    void patchCustomerById (UUID customerId, Customer customer);
 }

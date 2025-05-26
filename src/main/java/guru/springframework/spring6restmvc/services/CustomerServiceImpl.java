@@ -2,6 +2,7 @@ package guru.springframework.spring6restmvc.services;
 
 import guru.springframework.spring6restmvc.model.Customer;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -11,6 +12,7 @@ import java.util.*;
  */
 @Service
 public class CustomerServiceImpl implements CustomerService {
+
 
     private Map<UUID, Customer> customerMap;
 
@@ -30,6 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
+
 
         Customer customer3 = Customer.builder()
                 .id(UUID.randomUUID())
@@ -56,16 +59,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer saveNewCustomerPOST(Customer theCustomer){
-    Customer newCustomer  = Customer.builder()
-            .id(UUID.randomUUID())
-            .version(1)
-            .updateDate(LocalDateTime.now())
-            .createdDate(LocalDateTime.now())
-            .name(theCustomer.getName())
-            .build();
-    customerMap.put(newCustomer.getId(), newCustomer);
-    return newCustomer;
+    public Customer saveNewCustomerPOST(Customer theCustomer) {
+        Customer newCustomer = Customer.builder()
+                .id(UUID.randomUUID())
+                .version(1)
+                .updateDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
+                .name(theCustomer.getName())
+                .build();
+        customerMap.put(newCustomer.getId(), newCustomer);
+        return newCustomer;
     }
 
     @Override
@@ -75,7 +78,21 @@ public class CustomerServiceImpl implements CustomerService {
         customerMap.put(customerId, existing);
         return null;
     }
-}
+
+    @Override
+    public Customer deleteCustomerById(UUID id) {
+               customerMap.remove(id);
+        return null;
+    }
+
+    @Override
+    public void patchCustomerById(UUID customerId, Customer customer) {
+        Customer existing = customerMap.get(customerId);
+        if (StringUtils.hasText(customer.getName())){
+           existing.setName(customer.getName());
+       }
+    }
+    }
 
 
 
