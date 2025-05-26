@@ -1,6 +1,6 @@
 package guru.springframework.spring6restmvc.controller;
-
 import guru.springframework.spring6restmvc.model.Beer;
+import guru.springframework.spring6restmvc.model.Customer;
 import guru.springframework.spring6restmvc.services.BeerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +25,9 @@ public class BeerController {
     @PostMapping
     //@RequestMapping(method = RequestMethod.POST)
     public ResponseEntity handlePost(@RequestBody Beer beer){
-
         Beer savedBeer = beerService.saveNewBeer(beer);
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/beer/" + savedBeer.getId().toString());
-
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 

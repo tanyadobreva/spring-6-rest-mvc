@@ -14,4 +14,8 @@ public interface CustomerService {
 
     List<Customer> getAllCustomers();
 
+
+    public Customer saveNewCustomerPOST(Customer customer) ;
+
+    Customer updateCustomerByIDPUT(UUID customerId, Customer customer);
 }
