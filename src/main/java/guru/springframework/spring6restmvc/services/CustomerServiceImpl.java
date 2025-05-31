@@ -69,6 +69,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer saveNewCustomer(Customer customer) {
 
+        System.out.println("Entering Save New Customer" + customerMap.size());
+
         Customer savedCustomer = Customer.builder()
                 .id(UUID.randomUUID())
                 .version(1)
@@ -78,6 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
 
         customerMap.put(savedCustomer.getId(), savedCustomer);
+        System.out.println("Exiting Save New Customer " + customerMap.size());
 
         return savedCustomer;
     }

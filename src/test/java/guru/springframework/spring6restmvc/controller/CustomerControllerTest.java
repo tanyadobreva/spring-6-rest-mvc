@@ -1,8 +1,9 @@
 package guru.springframework.spring6restmvc.controller;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6restmvc.model.Customer;
 import guru.springframework.spring6restmvc.services.CustomerService;
 import guru.springframework.spring6restmvc.services.CustomerServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,8 +12,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
@@ -21,11 +24,41 @@ class CustomerControllerTest {
     @MockitoBean
     CustomerService customerService;
 
+    CustomerServiceImpl customerServiceImpl;
+
     @Autowired
     MockMvc mockMvc;
 
-    CustomerServiceImpl customerServiceImpl = new CustomerServiceImpl();
+    @Autowired
+    ObjectMapper objectMapper = new ObjectMapper();
 
+    @BeforeEach
+    void setUp() {
+        customerServiceImpl = new CustomerServiceImpl();
+    }
+    @Test
+    void testCreateCustomer() throws Exception {
+
+
+        //ne e yasno zashto Guru pravi neshtata taka tuk. Kakuv izobshto e smisulut na tozi vid "test" i zashto suzdadeniya nov Klient vsushtnost ne e suzdaden v customerMap
+
+        System.out.println("Initial number of customers: " + customerServiceImpl.getAllCustomers().size());
+
+        Customer customer = customerServiceImpl.getAllCustomers().get(0);
+        customer.setId(null);
+        customer.setVersion(null);
+
+        given(customerService.saveNewCustomer(any(Customer.class))).willReturn(customerServiceImpl.getAllCustomers().get(1));
+
+        mockMvc.perform(post("/api/v1/customer").contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(customer))) //tuk e krainata skoba na perform!!!
+        .andExpect(status().isCreated())
+        .andExpect(header().exists("Location"));
+
+        System.out.println("Final number of customers: " + customerServiceImpl.getAllCustomers().size());
+
+    }
     @Test
     void listAllCustomers() throws Exception {
         given(customerService.getAllCustomers()).willReturn(customerServiceImpl.getAllCustomers());
@@ -36,7 +69,6 @@ class CustomerControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(3)));
     }
-
     @Test
     void getCustomerById() throws Exception {
         Customer customer = customerServiceImpl.getAllCustomers().get(0);

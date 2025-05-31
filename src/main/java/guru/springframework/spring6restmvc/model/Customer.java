@@ -18,4 +18,15 @@ public class Customer {
     private Integer version;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
+
+public String toString(){
+
+    String printObject = "name: " + this.name + " ID: " + this.id + " version: " + this.version + " createdDate: " + this.createdDate + " updateDate: " + this.updateDate;
+
+    System.out.println(printObject);
+    System.out.println("ENDING TO STRING: ");
+
+    return printObject;
+}
+
 }
